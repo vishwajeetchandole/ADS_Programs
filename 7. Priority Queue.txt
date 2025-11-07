@@ -1,0 +1,106 @@
+#include <stdio.h>
+#define MAX 5
+
+int priorityQueue[MAX];
+int priority[MAX];
+int size = 0;
+
+void enqueue(int value, int pr) {
+    int i, j;
+
+    if (size == MAX) {
+        printf("Queue Overflow\n");
+    } else {
+        i = size - 1;
+
+        /* Shift elements to maintain ascending priority order */
+        while (i >= 0 && pr < priority[i]) {
+            priorityQueue[i + 1] = priorityQueue[i];
+            priority[i + 1] = priority[i];
+            i--;
+        }
+
+        priorityQueue[i + 1] = value;
+        priority[i + 1] = pr;
+        size++;
+
+        printf("Inserted %d with priority %d\n", value, pr);
+    }
+}
+
+void dequeue() {
+    int i;
+
+    if (size == 0) {
+        printf("Queue Underflow\n");
+    } else {
+        printf("Deleted element %d with priority %d\n", priorityQueue[0], priority[0]);
+
+        /* Shift remaining elements forward */
+        i = 0;
+        while (i < size - 1) {
+            priorityQueue[i] = priorityQueue[i + 1];
+            priority[i] = priority[i + 1];
+            i++;
+        }
+
+        size--;
+    }
+}
+
+void display() {
+    int i;
+    if (size == 0) {
+        printf("Queue is empty\n");
+    } else {
+        printf("Priority Queue elements are:\n");
+        i = 0;
+        while (i < size) {
+            printf("Value: %d\tPriority: %d\n", priorityQueue[i], priority[i]);
+            i++;
+        }
+    }
+}
+
+int main() {
+    int choice, value, pr;
+    int i; /* declared outside for compatibility */
+
+    do {
+        printf("\n--- Priority Queue Menu ---\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                printf("Enter its priority (smaller number = higher priority): ");
+                scanf("%d", &pr);
+                enqueue(value, pr);
+                break;
+
+            case 2:
+                dequeue();
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice\n");
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}

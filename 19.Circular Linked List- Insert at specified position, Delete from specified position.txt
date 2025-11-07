@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+void insertAtPosition(int value, int pos) {
+    struct Node *newNode, *temp;
+    int i;
+
+    newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if (pos == 1) { /* Insert at beginning */
+        if (head == NULL) {
+            head = newNode;
+            newNode->next = head;
+        } else {
+            temp = head;
+            while (temp->next != head) {
+                temp = temp->next;
+            }
+            newNode->next = head;
+            temp->next = newNode;
+            head = newNode;
+        }
+        printf("%d inserted at position %d\n", value, pos);
+        return;
+    }
+
+    temp = head;
+    i = 1;
+    while (i < pos - 1 && temp->next != head) {
+        temp = temp->next;
+        i++;
+    }
+
+    if (i != pos - 1) {
+        printf("Position %d is invalid\n", pos);
+    } else {
+        newNode->next = temp->next;
+        temp->next = newNode;
+        printf("%d inserted at position %d\n", value, pos);
+    }
+}
+
+void deleteAtPosition(int pos) {
+    struct Node *temp, *prev;
+    int i;
+
+    if (head == NULL) {
+        printf("List is empty, nothing to delete\n");
+        return;
+    }
+
+    if (pos == 1) { /* Delete first node */
+        temp = head;
+        if (head->next == head) { /* Only one node */
+            head = NULL;
+            printf("%d deleted from position 1\n", temp->data);
+            free(temp);
+        } else {
+            prev = head;
+            while (prev->next != head) {
+                prev = prev->next;
+            }
+            head = head->next;
+            prev->next = head;
+            printf("%d deleted from position 1\n", temp->data);
+            free(temp);
+        }
+        return;
+    }
+
+    prev = head;
+    temp = head->next;
+    i = 2;
+    while (i < pos && temp != head) {
+        prev = temp;
+        temp = temp->next;
+        i++;
+    }
+
+    if (temp == head) {
+        printf("Position %d is invalid\n", pos);
+    } else {
+        prev->next = temp->next;
+        printf("%d deleted from position %d\n", temp->data, pos);
+        free(temp);
+    }
+}
+
+void display() {
+    struct Node *temp;
+
+    if (head == NULL) {
+        printf("Circular Linked List is empty\n");
+        return;
+    }
+
+    temp = head;
+    printf("Circular Linked List elements are:\n");
+    do {
+        printf("%d\n", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+}
+
+int main() {
+    int choice, value, pos;
+    int i; /* declared outside loops for old compiler compatibility */
+
+    do {
+        printf("\n--- Circular Linked List Menu ---\n");
+        printf("1. Insert at Position\n");
+        printf("2. Delete from Position\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                printf("Enter position to insert: ");
+                scanf("%d", &pos);
+                insertAtPosition(value, pos);
+                break;
+
+            case 2:
+                printf("Enter position to delete: ");
+                scanf("%d", &pos);
+                deleteAtPosition(pos);
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice\n");
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}

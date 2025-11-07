@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <ctype.h>  /* for isdigit() and isalpha() */
+#include <string.h>
+#define MAX 50
+
+char stack[MAX];
+int top = -1;
+
+void push(char c) {
+    if (top == MAX - 1) {
+        printf("Stack Overflow\n");
+    } else {
+        top++;
+        stack[top] = c;
+    }
+}
+
+char pop() {
+    if (top == -1) {
+        return '\0';
+    } else {
+        return stack[top--];
+    }
+}
+
+char peek() {
+    if (top == -1)
+        return '\0';
+    else
+        return stack[top];
+}
+
+int precedence(char c) {
+    if (c == '^')
+        return 3;
+    else if (c == '*' || c == '/')
+        return 2;
+    else if (c == '+' || c == '-')
+        return 1;
+    else
+        return 0;
+}
+
+int isOperator(char c) {
+    if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^')
+        return 1;
+    else
+        return 0;
+}
+
+void infixToPostfix(char infix[], char postfix[]) {
+    int i, k;
+    char c;
+    i = 0;  /* for traversing infix */
+    k = 0;  /* for building postfix */
+
+    while (infix[i] != '\0') {
+        c = infix[i];
+
+        if (isalnum(c)) { /* Operand */
+            postfix[k] = c;
+            k++;
+        } else if (c == '(') {
+            push(c);
+        } else if (c == ')') {
+            while (top != -1 && peek() != '(') {
+                postfix[k] = pop();
+                k++;
+            }
+            if (top != -1 && peek() == '(')
+                pop(); /* Remove '(' from stack */
+        } else if (isOperator(c)) {
+            while (top != -1 && precedence(peek()) >= precedence(c)) {
+                postfix[k] = pop();
+                k++;
+            }
+            push(c);
+        }
+
+        i++;
+    }
+
+    while (top != -1) { /* Pop remaining operators */
+        postfix[k] = pop();
+        k++;
+    }
+
+    postfix[k] = '\0';
+}
+
+int main() {
+    char infix[MAX], postfix[MAX];
+    int i; /* declared outside loops */
+
+    printf("Enter infix expression: ");
+    scanf("%s", infix);
+
+    infixToPostfix(infix, postfix);
+
+    printf("Postfix expression: %s\n", postfix);
+
+    return 0;
+}

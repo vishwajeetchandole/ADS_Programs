@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+void insertEnd(int value) {
+    struct Node *newNode, *temp;
+    newNode = (struct Node*)malloc(sizeof(struct Node));
+
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+    } else {
+        newNode->data = value;
+        newNode->next = NULL;
+
+        if (head == NULL) {
+            head = newNode;
+        } else {
+            temp = head;
+            while (temp->next != NULL) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+        }
+        printf("%d inserted at end\n", value);
+    }
+}
+
+void deleteEnd() {
+    struct Node *temp, *prev;
+    if (head == NULL) {
+        printf("List is empty, nothing to delete\n");
+    } else if (head->next == NULL) {
+        printf("%d deleted from end\n", head->data);
+        free(head);
+        head = NULL;
+    } else {
+        temp = head;
+        prev = NULL;
+        while (temp->next != NULL) {
+            prev = temp;
+            temp = temp->next;
+        }
+        printf("%d deleted from end\n", temp->data);
+        prev->next = NULL;
+        free(temp);
+    }
+}
+
+void display() {
+    struct Node *temp;
+    temp = head;
+
+    if (temp == NULL) {
+        printf("List is empty\n");
+    } else {
+        printf("Linked List elements are:\n");
+        while (temp != NULL) {
+            printf("%d\n", temp->data);
+            temp = temp->next;
+        }
+    }
+}
+
+int main() {
+    int choice, value;
+    int i; /* declared outside loops for old compiler compatibility */
+
+    do {
+        printf("\n--- Singly Linked List Menu ---\n");
+        printf("1. Insert at End\n");
+        printf("2. Delete from End\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                insertEnd(value);
+                break;
+
+            case 2:
+                deleteEnd();
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice\n");
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}

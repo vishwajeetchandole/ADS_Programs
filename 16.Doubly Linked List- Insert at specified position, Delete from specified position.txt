@@ -1,0 +1,149 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+void insertAtPosition(int value, int pos) {
+    struct Node *newNode, *temp;
+    int i;
+
+    newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    newNode->data = value;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+
+    if (pos == 1) { /* Insert at beginning */
+        newNode->next = head;
+        if (head != NULL)
+            head->prev = newNode;
+        head = newNode;
+        printf("%d inserted at position %d\n", value, pos);
+        return;
+    }
+
+    temp = head;
+    i = 1;
+    while (i < pos - 1 && temp != NULL) {
+        temp = temp->next;
+        i++;
+    }
+
+    if (temp == NULL) {
+        printf("Position %d is invalid\n", pos);
+    } else {
+        newNode->next = temp->next;
+        newNode->prev = temp;
+        if (temp->next != NULL)
+            temp->next->prev = newNode;
+        temp->next = newNode;
+        printf("%d inserted at position %d\n", value, pos);
+    }
+}
+
+void deleteAtPosition(int pos) {
+    struct Node *temp;
+    int i;
+
+    if (head == NULL) {
+        printf("List is empty, nothing to delete\n");
+        return;
+    }
+
+    temp = head;
+
+    if (pos == 1) { /* Delete first node */
+        head = head->next;
+        if (head != NULL)
+            head->prev = NULL;
+        printf("%d deleted from position %d\n", temp->data, pos);
+        free(temp);
+        return;
+    }
+
+    i = 1;
+    while (i < pos && temp != NULL) {
+        temp = temp->next;
+        i++;
+    }
+
+    if (temp == NULL) {
+        printf("Position %d is invalid\n", pos);
+    } else {
+        temp->prev->next = temp->next;
+        if (temp->next != NULL)
+            temp->next->prev = temp->prev;
+        printf("%d deleted from position %d\n", temp->data, pos);
+        free(temp);
+    }
+}
+
+void display() {
+    struct Node *temp;
+    temp = head;
+
+    if (temp == NULL) {
+        printf("List is empty\n");
+    } else {
+        printf("Doubly Linked List elements are:\n");
+        while (temp != NULL) {
+            printf("%d\n", temp->data);
+            temp = temp->next;
+        }
+    }
+}
+
+int main() {
+    int choice, value, pos;
+    int i; /* declared outside loops for older compiler compatibility */
+
+    do {
+        printf("\n--- Doubly Linked List Menu ---\n");
+        printf("1. Insert at Position\n");
+        printf("2. Delete from Position\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                printf("Enter position to insert: ");
+                scanf("%d", &pos);
+                insertAtPosition(value, pos);
+                break;
+
+            case 2:
+                printf("Enter position to delete: ");
+                scanf("%d", &pos);
+                deleteAtPosition(pos);
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice\n");
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}

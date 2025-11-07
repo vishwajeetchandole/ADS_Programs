@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *prev;
+    struct Node *next;
+};
+
+struct Node *head = NULL;
+
+void insertBeg(int value) {
+    struct Node *newNode;
+    newNode = (struct Node*)malloc(sizeof(struct Node));
+
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    newNode->data = value;
+    newNode->prev = NULL;
+    newNode->next = head;
+
+    if (head != NULL) {
+        head->prev = newNode;
+    }
+
+    head = newNode;
+    printf("%d inserted at beginning\n", value);
+}
+
+void deleteBeg() {
+    struct Node *temp;
+    if (head == NULL) {
+        printf("List is empty, nothing to delete\n");
+        return;
+    }
+
+    temp = head;
+    head = head->next;
+
+    if (head != NULL) {
+        head->prev = NULL;
+    }
+
+    printf("%d deleted from beginning\n", temp->data);
+    free(temp);
+}
+
+void display() {
+    struct Node *temp;
+    temp = head;
+
+    if (temp == NULL) {
+        printf("List is empty\n");
+    } else {
+        printf("Doubly Linked List elements are:\n");
+        while (temp != NULL) {
+            printf("%d\n", temp->data);
+            temp = temp->next;
+        }
+    }
+}
+
+int main() {
+    int choice, value;
+    int i; /* declared outside loops for older compiler compatibility */
+
+    do {
+        printf("\n--- Doubly Linked List Menu ---\n");
+        printf("1. Insert at Beginning\n");
+        printf("2. Delete from Beginning\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                insertBeg(value);
+                break;
+
+            case 2:
+                deleteBeg();
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice\n");
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}

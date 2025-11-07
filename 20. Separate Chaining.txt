@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TABLE_SIZE 10
+
+struct Node {
+    int data;
+    struct Node *next;
+};
+
+struct Node *hashTable[TABLE_SIZE];
+
+int hashFunction(int key) {
+    return key % TABLE_SIZE;
+}
+
+void insert(int key) {
+    int index;
+    struct Node *newNode, *temp;
+
+    newNode = (struct Node*)malloc(sizeof(struct Node));
+    if (newNode == NULL) {
+        printf("Memory allocation failed\n");
+        return;
+    }
+
+    newNode->data = key;
+    newNode->next = NULL;
+
+    index = hashFunction(key);
+
+    if (hashTable[index] == NULL) {
+        hashTable[index] = newNode;
+    } else {
+        temp = hashTable[index];
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+    }
+
+    printf("%d inserted at index %d\n", key, index);
+}
+
+void search(int key) {
+    int index;
+    struct Node *temp;
+
+    index = hashFunction(key);
+    temp = hashTable[index];
+
+    while (temp != NULL) {
+        if (temp->data == key) {
+            printf("%d found at index %d\n", key, index);
+            return;
+        }
+        temp = temp->next;
+    }
+
+    printf("%d not found in hash table\n", key);
+}
+
+void display() {
+    int i;
+    struct Node *temp;
+
+    for (i = 0; i < TABLE_SIZE; i++) {
+        printf("Index %d: ", i);
+        temp = hashTable[i];
+        if (temp == NULL) {
+            printf("NULL");
+        } else {
+            while (temp != NULL) {
+                printf("%d -> ", temp->data);
+                temp = temp->next;
+            }
+            printf("NULL");
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int choice, key;
+    int i; /* declared outside loops for old compiler compatibility */
+
+    for (i = 0; i < TABLE_SIZE; i++) {
+        hashTable[i] = NULL;
+    }
+
+    do {
+        printf("\n--- Hash Table with Separate Chaining Menu ---\n");
+        printf("1. Insert\n");
+        printf("2. Search\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter key to insert: ");
+                scanf("%d", &key);
+                insert(key);
+                break;
+
+            case 2:
+                printf("Enter key to search: ");
+                scanf("%d", &key);
+                search(key);
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice\n");
+        }
+
+    } while (choice != 4);
+
+    return 0;
+}
